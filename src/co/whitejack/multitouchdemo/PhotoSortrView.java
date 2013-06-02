@@ -127,26 +127,41 @@ public class PhotoSortrView extends View implements
 				canvas.drawCircle(xs[i], ys[i], 50 + pressures[i] * 80,
 						mLinePaintTouchPointCircle);
 			if (numPoints == 2) {
-				float[] rad = getRadius(xs,ys,pressures);
-				int angle = getAngle(xs[0],ys[0],xs[1],ys[1]);
-				canvas.drawLine(xs[0], ys[0], xs[1], ys[1],
+				float[] xr = getLines(xs,ys,pressures);
+				canvas.drawLine(xr[0], xr[1], xr[2], xr[3],
 						mLinePaintTouchPointCircle);
 			}
 		}
 	}
 	
 	private float[] getRadius(float[] xs, float[] ys, float[] pressures) {
-		float[] radius = currTouchPoint.getXs();
+		float[] radius = {0,0};
 		radius[0] = 50 + pressures[0] *80;
 		radius[1] = 50 + pressures[0] *80;
 		return radius;
 	}
 
-	private int getAngle(float x1, float y1, float x2, float y2) {
-		int angle = 0;
+	private double getAngle(float x1, float y1, float x2, float y2) {
+		double angle = 0;
 		double c = Math.sqrt((Math.pow((double)x2-x1, 2)+Math.pow(y2-y1, 2)));
-		angle = (int) Math.asin(c/(y2-y1));
+		angle = Math.asin(c/(y2-y1));
 		return angle;
+	}
+	
+	private float[] getLines(float[] xa, float[] ya,float[] pressures) {
+		float[] points = {0,0,0,0};
+		float[] radii = getRadius(xa,ya,pressures);
+
+		if(xa[0]<xa[1]) {
+			if(ya[0]<ya[1]) {
+				double angleA = getAngle(xa[1], ya[1], xa[2], ya[2]);
+				points[0] = (float) ((float) xa[0] + (radii[0] * Math.cos(angleA)));
+				points[1] = (float) ((float) ya[0] + (radii[0] * Math.sin(angleA)));
+				points[2] = (float) ((float) xa[1] - (radii[1] * Math.cos(angleA + Math.PI)));
+				points[3] = (float) ((float) ya[1] - (radii[1] * Math.sin(angleA + Math.PI)));
+			}
+		}
+		return points;
 	}
 	// ---------------------------------------------------------------------------------------------------
 
