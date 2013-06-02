@@ -1,28 +1,3 @@
-/**
- * PhotoSorterView.java
- * 
- * (c) Luke Hutchison (luke.hutch@mit.edu)
- * 
- * TODO: Add OpenGL acceleration.
- * 
- * --
- * 
- * Released under the MIT license (but please notify me if you use this code, so that I can give your project credit at
- * http://code.google.com/p/android-multitouch-controller ).
- * 
- * MIT license: http://www.opensource.org/licenses/MIT
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
- * to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
- * and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
- * DEALINGS IN THE SOFTWARE.
- */
 package co.whitejack.multitouchdemo;
 
 import java.util.ArrayList;
@@ -44,6 +19,12 @@ import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
 
+
+/**
+ * PhotoSortrView is a class that uses an opensource MultiTouchController API to manufacture images and control them with up to 2 fingers.
+ * @author gabizou
+ *
+ */
 public class PhotoSortrView extends View implements
 		MultiTouchObjectCanvas<PhotoSortrView.Img> {
 
@@ -145,12 +126,28 @@ public class PhotoSortrView extends View implements
 			for (int i = 0; i < numPoints; i++)
 				canvas.drawCircle(xs[i], ys[i], 50 + pressures[i] * 80,
 						mLinePaintTouchPointCircle);
-			if (numPoints == 2)
+			if (numPoints == 2) {
+				float[] rad = getRadius(xs,ys,pressures);
+				int angle = getAngle(xs[0],ys[0],xs[1],ys[1]);
 				canvas.drawLine(xs[0], ys[0], xs[1], ys[1],
 						mLinePaintTouchPointCircle);
+			}
 		}
 	}
+	
+	private float[] getRadius(float[] xs, float[] ys, float[] pressures) {
+		float[] radius = currTouchPoint.getXs();
+		radius[0] = 50 + pressures[0] *80;
+		radius[1] = 50 + pressures[0] *80;
+		return radius;
+	}
 
+	private int getAngle(float x1, float y1, float x2, float y2) {
+		int angle = 0;
+		double c = Math.sqrt((Math.pow((double)x2-x1, 2)+Math.pow(y2-y1, 2)));
+		angle = (int) Math.asin(c/(y2-y1));
+		return angle;
+	}
 	// ---------------------------------------------------------------------------------------------------
 
 	/** Pass touch events to the MT controller */
